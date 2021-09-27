@@ -14,6 +14,6 @@ You can switch between Current, Wave, and Current+Wave modes using the tabs at t
 > Contact ciceka@metu.edu.tr if you encounter any problems or calculation errors._
 
 ```
-What's new in v.1.0.1 (22.09.2021):
+What's new in v.1.1.0 (27.09.2021):
 - Added an option to select between different wave friction factor formulations.
 ```
