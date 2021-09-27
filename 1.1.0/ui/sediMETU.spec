@@ -5,7 +5,7 @@ block_cipher = None
 
 
 a = Analysis(['sediMETU.py'],
-             pathex=['C:\\Users\\ce-user\\Desktop\\sediMETU-1.0.3\\1.0.2\\ui'],
+             pathex=['C:\\Users\\ce-user\\Desktop\\sediMETU-1.0.3\\1.0.3\\ui'],
              binaries=[],
              datas=[],
              hiddenimports=[],

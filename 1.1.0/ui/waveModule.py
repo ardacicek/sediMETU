@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy.core.fromnumeric import size
 from regularWave import Wave
+from scipy.optimize import fsolve
 
 class Waves:
 
@@ -13,7 +14,7 @@ class Waves:
       # ro = 1027 #float(input("\u03C1w (kg/m\u00B3): "))
       # ro_s = 2650 #float(input("\u03C1\u209B (kg/m3): "))
 
-      def __init__(self, H0, T, angle, d50, h, z, nu, ro, ro_s, bedType):
+      def __init__(self, H0, T, angle, d50, h, z, nu, ro, ro_s, bedType, fwFormulationInput):
             self.H0 = H0
             self.T = T
             self.angle = angle
@@ -24,6 +25,7 @@ class Waves:
             self.ro = ro
             self.ro_s = ro_s
             self.bedType = bedType
+            self.fwFormulationInput = fwFormulationInput
 
 ## Wave Characteristics           
       def waveLength(self):
@@ -58,42 +60,107 @@ class Waves:
 
 
 ## Bed Friction Factor
+      def fwFormulation(self):
+            r = self.excursionLength()/self.ks()
+            # Myrhaug (1989)
+            func = lambda fwMyr : 0.32/fwMyr-(np.log(6.36*r*fwMyr**0.5)-np.log(1-np.exp(-0.0262*self.reynolds()*fwMyr**0.5/r))+4.71*r/(self.reynolds()*fwMyr**0.5))**2-1.64
+            myrhaugInitialGuess = 1.39*(self.excursionLength()/self.z0Total())**-0.52
+            fwMyrhaug = fsolve(func, myrhaugInitialGuess)
+            
+            # Swart's (1974)
+            if r <= 1.57:
+                  fwrSwart = 0.3
+            else:
+                  fwrSwart = 0.00251*np.exp(5.21*r**(-0.19))
+            
+            # Nielsen (1992)
+            fwrNielsen = np.exp(5.5*r**(-0.2)-6.3)
+
+            # Soulsby
+            fwrSoulsby = 1.39*(self.excursionLength()/self.z0Total())**-0.52
+            return {"Swart (1974)": fwrSwart, "Myrhaug (1989)": fwMyrhaug, "Nielsen (1992)" : fwrNielsen, "Soulsby" : fwrSoulsby}      
+      
+      def fwFormulationTable(self):
+            r = self.excursionLength()/self.ksTable()
+            func = lambda fwMyr : 0.32/fwMyr-(np.log(6.36*r*fwMyr**0.5)-np.log(1-np.exp(-0.0262*self.reynolds()*fwMyr**0.5/r))+4.71*r/(self.reynolds()*fwMyr**0.5))**2-1.64
+            myrhaugInitialGuess = 1.39*(self.excursionLength()/self.z0Table()[self.bedType])**-0.52
+            fwMyrhaug = fsolve(func, myrhaugInitialGuess)
+            
+            if r <= 1.57:
+                  fwrSwart = 0.3
+            else:
+                  fwrSwart = 0.00251*np.exp(5.21*r**(-0.19))
+            
+            fwrNielsen = np.exp(5.5*r**(-0.2)-6.3)
+
+            fwrSoulsby = 1.39*(self.excursionLength()/self.z0Table()[self.bedType])**-0.52
+            return {"Swart (1974)": fwrSwart, "Myrhaug (1989)": fwMyrhaug, "Nielsen (1992)" : fwrNielsen, "Soulsby" : fwrSoulsby}
             
       def fwTable(self): # From Table 7
-            fwr = 1.39*(self.excursionLength()/self.z0Table()[self.bedType])**-0.52 ##BURADAN DICT KEYWORDUNU SİL
-            
-            if self.reynolds() <= 5*10**5:
-                  B = 2
-                  N = 0.5
-                  text = "Laminar flow"
-            else:
-                  B = 0.0521
-                  N = 0.187
-            fws = B*self.reynolds()**(-N)
+            if not self.fwFormulationInput == "Myrhaug (1989)":
+                  fwr = self.fwFormulationTable()[self.fwFormulationInput]
+                  if self.reynolds() <= 5*10**5:
+                        B = 2
+                        N = 0.5
+                        text = "Laminar flow"
+                  else:
+                        B = 0.0521
+                        N = 0.187
+                  fws = B*self.reynolds()**(-N)
 
-            if fws > fwr and self.reynolds() > 5*10**5:
-                  text = "Smooth turbulent flow"
-            elif fws <= fwr and self.reynolds() > 5*10**5:
-                  text = "Rough turbulent flow"
-            return {"fw" : max(fwr, fws), "Condition" : text}
+                  if fws > fwr and self.reynolds() > 5*10**5:
+                        text = "Smooth turbulent flow"
+                  elif fws <= fwr and self.reynolds() > 5*10**5:
+                        text = "Rough turbulent flow"
+                  return {"fw" : max(fwr, fws), "Condition" : text}
+            elif self.fwFormulationInput == "Myrhaug (1989)": 
+                  fw = self.fwFormulationTable()[self.fwFormulationInput]
+                  if self.reynolds() <= 5*10**5:
+                        B = 2
+                        N = 0.5
+                        text = "Laminar flow"
+                  else:
+                        B = 0.0521
+                        N = 0.187
+                  fws = B*self.reynolds()**(-N)
+                  if fws > fw and self.reynolds() > 5*10**5:
+                        text = "Smooth turbulent flow"
+                  elif fws <= fw and self.reynolds() > 5*10**5:
+                        text = "Rough turbulent flow"
+                  return {"fw" : fw, "Condition" : text}
 
       def fwZ0(self): # From z0
-            fwr = 1.39*(self.excursionLength()/self.z0Total())**-0.52 ##BURADAN DICT KEYWORDUNU SİL # Eqn. 62a
-            
-            if self.reynolds() <= 5*10**5: # Eqn. 63
-                  B = 2
-                  N = 0.5
-                  text = "Laminar flow"
-            else:
-                  B = 0.0521
-                  N = 0.187
-            fws = B*self.reynolds()**(-N)
+            if not self.fwFormulationInput == "Myrhaug (1989)":
+                  fwr = self.fwFormulation()[self.fwFormulationInput]
+                  if self.reynolds() <= 5*10**5:
+                        B = 2
+                        N = 0.5
+                        text = "Laminar flow"
+                  else:
+                        B = 0.0521
+                        N = 0.187
+                  fws = B*self.reynolds()**(-N)
 
-            if fws > fwr and self.reynolds() > 5*10**5:
-                  text = "Smooth turbulent flow"
-            elif fws <= fwr and self.reynolds() > 5*10**5:
-                  text = "Rough turbulent flow"
-            return {"fw" : max(fwr, fws), "Condition" : text}           
+                  if fws > fwr and self.reynolds() > 5*10**5:
+                        text = "Smooth turbulent flow"
+                  elif fws <= fwr and self.reynolds() > 5*10**5:
+                        text = "Rough turbulent flow"
+                  return {"fw" : max(fwr, fws), "Condition" : text}
+            elif self.fwFormulationInput == "Myrhaug (1989)": 
+                  fw = self.fwFormulation()[self.fwFormulationInput]
+                  if self.reynolds() <= 5*10**5:
+                        B = 2
+                        N = 0.5
+                        text = "Laminar flow"
+                  else:
+                        B = 0.0521
+                        N = 0.187
+                  fws = B*self.reynolds()**(-N)
+                  if fws > fw and self.reynolds() > 5*10**5:
+                        text = "Smooth turbulent flow"
+                  elif fws <= fw and self.reynolds() > 5*10**5:
+                        text = "Rough turbulent flow"
+                  return {"fw" : fw, "Condition" : text}
 
 
 ## Shear Stress
@@ -158,6 +225,9 @@ class Waves:
 ## Bed Roughness Length, Table 7 can also be used
       def ks(self):
             return self.z0Total()*30
+
+      def ksTable(self):
+            return self.z0Table()[self.bedType]*30
 
       def z0s(self):
             return self.z0Table()["Flat"]
@@ -283,9 +353,9 @@ class Waves:
             return {"qbc" : qbCrest, "qbt" : qbTrough, "qbnet" : qbCrest-qbTrough}
 
 
-# wav = Waves(1.07,6,0,1*10**-3,5,0.1,1.36*10**-6,1027,2650)
+# wav = Waves(1,6,0,1,5,0.1,1.36,1027,2650,"Sand (rippled)","Soulsby")
 
-# print(wav.concentration())
+# print(wav.fwFormulation())
 
 # print(curren.CD())
 # print(curren.ripples())

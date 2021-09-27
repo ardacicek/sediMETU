@@ -1,4 +1,4 @@
-# sediMETU v1.0.1
+# sediMETU v1.1.0
 sediMETU is a basic calculator for sediment-related parameters with a simple GUI.
 Developed by Yagiz Arda Cicek, Ⓒ 2021 in METU using the formulas obtained from Soulsby, 1997.
 You can switch between Current, Wave, and Current+Wave modes using the tabs at the top. Fill the input section with known parameters and hit "Calculate!".
@@ -15,10 +15,5 @@ You can switch between Current, Wave, and Current+Wave modes using the tabs at t
 
 ```
 What's new in v.1.0.1 (22.09.2021):
-- Program returns NaN values for out of limit conditions,
-- Better input error handling algorithm,
-- d50 is now entered as mm,
-- v (kinematic viscosity) should be entered as (v_actual)/10^-6, e.g. for 0.00000136 -> enter 1.36,
-- Table 7 dropdown list is added for Wave module (you can now directly select the bed-type from the list),
-- Bug fixes for formulas.
+- Added an option to select between different wave friction factor formulations.
 ```

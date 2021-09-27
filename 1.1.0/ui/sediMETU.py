@@ -1,10 +1,13 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore, QtGui #pyqt stuff
 import sys
 from MainWindow import Ui_MainWindow
 from currentModule import Current
 from waveModule import Waves
 from wavePlusCurrentModule import WavePlusCurrent
 import ctypes  # An included library with Python install.   
+
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True) #enable highdpi scaling
+QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True) #use highdpi icons
 
 class MyApp(QtWidgets.QMainWindow):
     def __init__(self):
@@ -152,6 +155,7 @@ class MyApp(QtWidgets.QMainWindow):
 
     def calculateWave(self):
         bedType = self.ui.bedType_txt.text()
+        fwFormulation = self.ui.fw_formulation_txt.text()
         
         ## Input Error Check
         inputController = 0
@@ -254,7 +258,7 @@ class MyApp(QtWidgets.QMainWindow):
         # nu = 1.36*10**-6
         # ro = 1027
         # ro_s = 2650
-        waveRes = Waves(H0,T,angle,d50,h,z,nu,ro,ro_s,bedType)
+        waveRes = Waves(H0,T,angle,d50,h,z,nu,ro,ro_s,bedType,fwFormulation)
         self.ui.condition_Wave_txt.setText(waveRes.control())
 
         ## Wave Characteristics
@@ -483,6 +487,6 @@ def app():
     app = QtWidgets.QApplication(sys.argv)
     win = MyApp()
     win.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec_())
 
 app()

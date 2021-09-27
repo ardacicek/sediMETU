@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>sediMETU v1.0.2</string>
+   <string>sediMETU v1.1.0</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -965,7 +965,7 @@
         <enum>QFrame::Raised</enum>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline;&quot;&gt;sediMETU v1.0.2 Changelog (27.09.2021):&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;- Added high DPI screen support (program was being displayed incorrectly on high DPI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;screens). &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;This software is developed only for educational purposes and might contain errors. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Please use it with caution.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Contact ciceka@metu.edu.tr if you encounter any problems or calculation errors.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; text-decoration: underline;&quot;&gt;sediMETU v1.1.0 Changelog (27.09.2021):&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;- Added option to select between different wave friction factor formulations.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;This software is developed only for educational purposes and might contain errors. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Please use it with caution.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt; font-style:italic;&quot;&gt;Contact ciceka@metu.edu.tr if you encounter any problems or calculation errors.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
       </widget>
       <widget class="QPushButton" name="closeButton_btn">
@@ -991,7 +991,7 @@
       <property name="geometry">
        <rect>
         <x>800</x>
-        <y>350</y>
+        <y>379</y>
         <width>291</width>
         <height>250</height>
        </rect>
@@ -1175,8 +1175,8 @@
      <widget class="QWidget" name="formLayoutWidget_9">
       <property name="geometry">
        <rect>
-        <x>410</x>
-        <y>350</y>
+        <x>400</x>
+        <y>380</y>
         <width>351</width>
         <height>170</height>
        </rect>
@@ -1319,7 +1319,7 @@
         <x>410</x>
         <y>50</y>
         <width>111</width>
-        <height>261</height>
+        <height>281</height>
        </rect>
       </property>
       <property name="font">
@@ -1338,7 +1338,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>540</y>
+        <y>560</y>
         <width>351</width>
         <height>122</height>
        </rect>
@@ -1520,7 +1520,7 @@
       <property name="geometry">
        <rect>
         <x>20</x>
-        <y>350</y>
+        <y>380</y>
         <width>351</width>
         <height>174</height>
        </rect>
@@ -1669,7 +1669,7 @@
         <x>20</x>
         <y>30</y>
         <width>351</width>
-        <height>310</height>
+        <height>336</height>
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout_16">
@@ -1831,19 +1831,6 @@
        <item row="10" column="1">
         <widget class="QLineEdit" name="ro_s_Wave_txt"/>
        </item>
-       <item row="11" column="0">
-        <widget class="QLabel" name="bed_type_lbl">
-         <property name="font">
-          <font>
-           <family>MS Shell Dlg 2</family>
-           <pointsize>10</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select bed-type from the list (Table 7):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-        </widget>
-       </item>
        <item row="11" column="1">
         <widget class="QComboBox" name="table7_cmb">
          <property name="sizePolicy">
@@ -1927,7 +1914,7 @@
          </property>
         </widget>
        </item>
-       <item row="12" column="0" colspan="2">
+       <item row="13" column="0" colspan="2">
         <widget class="QLineEdit" name="condition_Wave_txt">
          <property name="font">
           <font>
@@ -1941,13 +1928,79 @@
          </property>
         </widget>
        </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="bed_type_lbl">
+         <property name="font">
+          <font>
+           <family>MS Shell Dlg 2</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select bed-type from the list (Table 7):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="0">
+        <widget class="QLabel" name="fwr_formulation_lbl">
+         <property name="font">
+          <font>
+           <family>MS Shell Dlg 2</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select wave friction factor formulation:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="12" column="1">
+        <widget class="QComboBox" name="fw_cmb">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>MS Shell Dlg 2</family>
+           <weight>50</weight>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="currentText">
+          <string>Swart (1974)</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>Swart (1974)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Myrhaug (1989)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Nielsen (1992)</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Soulsby</string>
+          </property>
+         </item>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="formLayoutWidget_15">
       <property name="geometry">
        <rect>
-        <x>410</x>
-        <y>540</y>
+        <x>400</x>
+        <y>560</y>
         <width>351</width>
         <height>224</height>
        </rect>
@@ -2155,21 +2208,35 @@
        <string/>
       </property>
       <property name="text">
-       <string>Sand (rippled)</string>
+       <string>Mud</string>
       </property>
       <property name="clearButtonEnabled">
        <bool>false</bool>
       </property>
      </widget>
+     <widget class="QLineEdit" name="fw_formulation_txt">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>220</y>
+        <width>41</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Swart (1974)</string>
+      </property>
+     </widget>
+     <zorder>fw_formulation_txt</zorder>
      <zorder>bedType_txt</zorder>
      <zorder>formLayoutWidget_8</zorder>
      <zorder>formLayoutWidget_9</zorder>
-     <zorder>calculateWave_btn</zorder>
      <zorder>formLayoutWidget_10</zorder>
      <zorder>formLayoutWidget_11</zorder>
      <zorder>formLayoutWidget_12</zorder>
      <zorder>formLayoutWidget_14</zorder>
      <zorder>formLayoutWidget_15</zorder>
+     <zorder>calculateWave_btn</zorder>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
@@ -3405,6 +3472,22 @@
     <hint type="destinationlabel">
      <x>622</x>
      <y>477</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fw_cmb</sender>
+   <signal>activated(QString)</signal>
+   <receiver>fw_formulation_txt</receiver>
+   <slot>setText(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>312</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>641</x>
+     <y>291</y>
     </hint>
    </hints>
   </connection>
