@@ -15,5 +15,5 @@ You can switch between Current, Wave, and Current+Wave modes using the tabs at t
 
 ```
 What's new in v.1.0.1 (22.09.2021):
-- Added option to select between different wave friction factor formulations.
+- Added an option to select between different wave friction factor formulations.
 ```
