@@ -1,6 +1,7 @@
 # print(" This program is developed by Yagiz Arda Cicek / METU Coastal Engineering Department (Sept - 2020) ".center(120,"-"))
 
 from math import (pi, sqrt)
+from PyQt5.QtCore import reset
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.core.fromnumeric import size
@@ -62,44 +63,70 @@ class Waves:
 ## Bed Friction Factor
       def fwFormulation(self):
             r = self.excursionLength()/self.ks()
-            # Myrhaug (1989)
+            # Myrhaug (1989) Eqn. 59
             func = lambda fwMyr : 0.32/fwMyr-(np.log(6.36*r*fwMyr**0.5)-np.log(1-np.exp(-0.0262*self.reynolds()*fwMyr**0.5/r))+4.71*r/(self.reynolds()*fwMyr**0.5))**2-1.64
             myrhaugInitialGuess = 1.39*(self.excursionLength()/self.z0Total())**-0.52
             fwMyrhaug = fsolve(func, myrhaugInitialGuess)
             
-            # Swart's (1974)
+            # Swart's (1974) Eqn. 60a & 60b
             if r <= 1.57:
                   fwrSwart = 0.3
             else:
                   fwrSwart = 0.00251*np.exp(5.21*r**(-0.19))
             
-            # Nielsen (1992)
+            # Nielsen (1992) Eqn. 61
             fwrNielsen = np.exp(5.5*r**(-0.2)-6.3)
 
-            # Soulsby
+            # Soulsby Eqn. 62
             fwrSoulsby = 1.39*(self.excursionLength()/self.z0Total())**-0.52
-            return {"Swart (1974)": fwrSwart, "Myrhaug (1989)": fwMyrhaug, "Nielsen (1992)" : fwrNielsen, "Soulsby" : fwrSoulsby}      
+            return {"Swart (1974)": fwrSwart, "Myrhaug (1989)": fwMyrhaug, "Nielsen (1992)" : fwrNielsen, "Soulsby" : fwrSoulsby}
+
+      def fwFormulationFlatBed(self): # for skin friction calculations
+            z0 = self.d50/12
+            ks = self.d50*2.5
+            r = self.excursionLength()/ks
+            # Myrhaug (1989) Eqn. 59
+            func = lambda fwMyr : 0.32/fwMyr-(np.log(6.36*r*fwMyr**0.5)-np.log(1-np.exp(-0.0262*self.reynolds()*fwMyr**0.5/r))+4.71*r/(self.reynolds()*fwMyr**0.5))**2-1.64
+            myrhaugInitialGuess = 1.39*(self.excursionLength()/z0)**-0.52
+            fwMyrhaug = fsolve(func, myrhaugInitialGuess)
+            
+            # Swart's (1974) Eqn. 60a & 60b
+            if r <= 1.57:
+                  fwrSwart = 0.3
+            else:
+                  fwrSwart = 0.00251*np.exp(5.21*r**(-0.19))
+            
+            # Nielsen (1992) Eqn. 61
+            fwrNielsen = np.exp(5.5*r**(-0.2)-6.3)
+
+            # Soulsby Eqn. 62
+            fwrSoulsby = 1.39*(self.excursionLength()/z0)**-0.52
+            return {"Swart (1974)": fwrSwart, "Myrhaug (1989)": fwMyrhaug, "Nielsen (1992)" : fwrNielsen, "Soulsby" : fwrSoulsby}   
       
       def fwFormulationTable(self):
             r = self.excursionLength()/self.ksTable()
+            # Myrhaug (1989) Eqn. 59
             func = lambda fwMyr : 0.32/fwMyr-(np.log(6.36*r*fwMyr**0.5)-np.log(1-np.exp(-0.0262*self.reynolds()*fwMyr**0.5/r))+4.71*r/(self.reynolds()*fwMyr**0.5))**2-1.64
             myrhaugInitialGuess = 1.39*(self.excursionLength()/self.z0Table()[self.bedType])**-0.52
             fwMyrhaug = fsolve(func, myrhaugInitialGuess)
             
+            # Swart's (1974) Eqn. 60a & 60b
             if r <= 1.57:
                   fwrSwart = 0.3
             else:
                   fwrSwart = 0.00251*np.exp(5.21*r**(-0.19))
             
+            # Nielsen (1992) Eqn. 61
             fwrNielsen = np.exp(5.5*r**(-0.2)-6.3)
 
+            # Soulsby Eqn. 62
             fwrSoulsby = 1.39*(self.excursionLength()/self.z0Table()[self.bedType])**-0.52
             return {"Swart (1974)": fwrSwart, "Myrhaug (1989)": fwMyrhaug, "Nielsen (1992)" : fwrNielsen, "Soulsby" : fwrSoulsby}
             
       def fwTable(self): # From Table 7
             if not self.fwFormulationInput == "Myrhaug (1989)":
                   fwr = self.fwFormulationTable()[self.fwFormulationInput]
-                  if self.reynolds() <= 5*10**5:
+                  if self.reynolds() <= 5*10**5: # Eqn. 63
                         B = 2
                         N = 0.5
                         text = "Laminar flow"
@@ -132,7 +159,7 @@ class Waves:
       def fwZ0(self): # From z0
             if not self.fwFormulationInput == "Myrhaug (1989)":
                   fwr = self.fwFormulation()[self.fwFormulationInput]
-                  if self.reynolds() <= 5*10**5:
+                  if self.reynolds() <= 5*10**5: # Eqn. 63
                         B = 2
                         N = 0.5
                         text = "Laminar flow"
@@ -165,16 +192,7 @@ class Waves:
 
 ## Shear Stress
       def tauSkin(self):
-            fwr = 1.39*(self.excursionLength()/self.z0Table()["Flat"])**-0.52 # Eqn. 62a
-            
-            if self.reynolds() <= 5*10**5: # Eqn. 63
-                  B = 2
-                  N = 0.5
-            else:
-                  B = 0.0521
-                  N = 0.187
-            fws = B*self.reynolds()**(-N)
-            fw = max(fwr, fws)
+            fw = self.fwFormulationFlatBed()[self.fwFormulationInput]
             return 0.5*self.ro*fw*self.regularOrbitalVelocity()**2 # Eqn. 57
             
       def shieldsSkin(self):
@@ -214,14 +232,20 @@ class Waves:
             waveMobilityNumber = self.regularOrbitalVelocity()**2/(self.g*(self.s()-1)*self.d50)
             # return self.shieldsSkin()
             if self.shieldsSkin() < self.shieldsCritical(): # Eqn. 89a
-                  return {'rippleHeight' : 0, 'rippleLength' : 100000}
+                  return {'rippleHeight' : 0, 'rippleLength' : 100000, "text" : ""}
             elif waveMobilityNumber < 156 and self.shieldsSkin() < 0.831 and self.d50 < 0.8*10**-3: # Eqn. 89b and pg. 115
-                  return {'rippleHeight' : (0.275-0.022*waveMobilityNumber**0.5)*self.excursionLength(), 'rippleLength' : (0.275-0.022*waveMobilityNumber**0.5)*self.excursionLength()/(0.182-0.24*self.shieldsSkin()**1.5)}
+                  return {'rippleHeight' : (0.275-0.022*waveMobilityNumber**0.5)*self.excursionLength(), 'rippleLength' : (0.275-0.022*waveMobilityNumber**0.5)*self.excursionLength()/(0.182-0.24*self.shieldsSkin()**1.5), "text" : ""}
             elif waveMobilityNumber < 156 and self.shieldsSkin() < 0.831 and self.d50 > 0.8*10**-3: # Eqn. 89b and pg. 115
-                  return {'rippleHeight' : 0, 'rippleLength' : 100000}
+                  return {'rippleHeight' : 0, 'rippleLength' : 100000, "text" : ""}
             elif waveMobilityNumber >= 156 or self.shieldsSkin() >= 0.831: # Eqn. 89c
-                  return {'rippleHeight' : 0, 'rippleLength' : 100000}
-
+                  if waveMobilityNumber >= 156 and self.shieldsSkin() < 0.831:
+                        # print(waveMobilityNumber)
+                        return {'rippleHeight' : 0, 'rippleLength' : 100000, "text" : "Formula incompatibility, \u03A6 > 156 but \u03B8\u209B < 0.831"}
+                  else:
+                        return {'rippleHeight' : 0, 'rippleLength' : 100000, "text" : ""}
+                  
+            # The wash-out conditions waveMobilityNumber = 156 and shieldsSkin = 0.831 are not entirely compatible with each other. (Soulsby, pg 122)
+            
 ## Bed Roughness Length, Table 7 can also be used
       def ks(self):
             return self.z0Total()*30
@@ -250,7 +274,7 @@ class Waves:
 
 ## Suspension Profile
       def concentration(self):
-            if self.shieldsSkin() <= 0.8: # Aşağıdaki formüller rippled bed için
+            if self.shieldsSkin() <= 0.831: # Aşağıdaki formüller rippled bed için, 0.831 or 0.8???
                   r = self.regularOrbitalVelocity()*self.T/(5*pi*self.d50)
                   fwr = 0.00251*np.exp(5.21*r**-0.19) # Eqn. 60b
                   teta_r = fwr*self.regularOrbitalVelocity()**2/(2*(self.s()-1)*self.g*self.d50*(1-pi*self.ripples()["rippleHeight"]/self.ripples()["rippleLength"])**2) # Eqn. 113d
@@ -266,7 +290,7 @@ class Waves:
                   C = []
                   for i in zArray: # Eqn. 112
                         C.append(C0*np.exp(-i/l))
-            elif self.shieldsSkin() > 0.8:
+            elif self.shieldsSkin() > 0.831:
                   za = 2*self.d50
                   Ca = 0.331*(self.shieldsSkin()-0.045)**1.75/(1+0.72*(self.shieldsSkin()-0.045)**1.75)
                   uStar = (self.tauTotalZ0()*self.ro)**0.5 ## total or skin?
@@ -279,7 +303,7 @@ class Waves:
             return {"C" : np.asarray(C).reshape(len(C),1), "zArray" : zArray, "Rouse": Rouse}
 
       def concentrationAtZ(self):
-            if self.shieldsSkin() <= 0.8: # Aşağıdaki formüller rippled bed için
+            if self.shieldsSkin() <= 0.831: # Aşağıdaki formüller rippled bed için, 0.831 or 0.8???
                   r = self.regularOrbitalVelocity()*self.T/(5*pi*self.d50)
                   fwr = 0.00251*np.exp(5.21*r**-0.19) # Eqn. 60b
                   teta_r = fwr*self.regularOrbitalVelocity()**2/(2*(self.s()-1)*self.g*self.d50*(1-pi*self.ripples()["rippleHeight"]/self.ripples()["rippleLength"])**2) # Eqn. 113d
@@ -288,11 +312,13 @@ class Waves:
                   if self.regularOrbitalVelocity()/self.settlingVelocity() < 18: # Eqn. 113a
                         l = 0.075*self.regularOrbitalVelocity()/self.settlingVelocity()*self.ripples()["rippleHeight"]
                   else: # Eqn. 113b
-                        l = 1.4*self.ripples()["rippleHeight"]
-
+                        if self.ripples()["rippleHeight"] == 0:
+                              l = 1.4*0.0000000000001 # to get around zero division error
+                        else:
+                              l = 1.4*self.ripples()["rippleHeight"]
                   concentrationZ = C0*np.exp(-self.z/l)
 
-            elif self.shieldsSkin() > 0.8:
+            elif self.shieldsSkin() > 0.831:
                   za = 2*self.d50
                   Ca = 0.331*(self.shieldsSkin()-0.045)**1.75/(1+0.72*(self.shieldsSkin()-0.045)**1.75)
                   uStar = (self.tauTotalZ0()*self.ro)**0.5 ## total or skin?
@@ -353,9 +379,10 @@ class Waves:
             return {"qbc" : qbCrest, "qbt" : qbTrough, "qbnet" : qbCrest-qbTrough}
 
 
-# wav = Waves(1,6,0,1,5,0.1,1.36,1027,2650,"Sand (rippled)","Soulsby")
+# wav = Waves(2.1,8,12,0.2,10,0.1,1.36,1027,2650,"Sand (rippled)","Swart (1974)")
+# print(wav.ripples())
 
-# print(wav.fwFormulation())
+
 
 # print(curren.CD())
 # print(curren.ripples())

@@ -278,6 +278,8 @@ class MyApp(QtWidgets.QMainWindow):
         ## Ripple Characteristics
         self.ui.rippleHeight_Wave_txt.setText('%.8f'%waveRes.ripples()["rippleHeight"])
         self.ui.rippleLength_Wave_txt.setText('%.8f'%waveRes.ripples()["rippleLength"])
+        self.ui.rippleControl_wave_txt.setText(waveRes.ripples()["text"])
+
 
         ## Suspension & Bed Load
         self.ui.rouse_Wave_txt.setText('%.8f'%waveRes.concentration()["Rouse"])

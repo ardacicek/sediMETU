@@ -167,7 +167,7 @@ class Current:
                         C.append(Ca*((i/za)*(self.h-za)/(self.h-i))**(-bprime)) # Eqn. 108a
                         
                         zPlot.append(i)
-                  elif self.h/2 < i  and i < self.h:
+                  elif self.h/2 <= i  and i < self.h:
                         C.append((Ca*(za/(self.h-za))**(bprime))*np.exp(-4*bprime*(i/self.h-0.5))) # Eqn. 108b
                         zPlot.append(i)
 
@@ -183,9 +183,9 @@ class Current:
             for i in zArray: 
                   if za < i and i < self.h/2:
                         zPlot.append(i)
-                  elif self.h/2 < i  and i < self.h:
+                  elif self.h/2 <= i  and i < self.h:
                         zPlot.append(i)
-            print(np.size(self.logVeloProfile()["Ulog"]))
+
 
             return np.asarray(conLoad).reshape(len(conLoad),1)
 
@@ -214,7 +214,7 @@ class Current:
             if za < self.z and self.z < self.h/2:
                   concentrationZ = (Ca*((self.z/za)*(self.h-za)/(self.h-self.z))**(-bprime)) # Eqn. 108a
 
-            elif self.h/2 < self.z  and self.z < self.h:
+            elif self.h/2 <= self.z  and self.z < self.h:
                   concentrationZ = (Ca*(za/(self.h-za))**(bprime))*np.exp(-4*bprime*(self.z/self.h-0.5)) # Eqn. 108b
 
             else:
@@ -261,8 +261,8 @@ class Current:
             return fi*(self.g*(self.s()-1)*self.d50**3)**0.5
 
 
-# curren = Current(1,1,5,0.45,1,1017,2650)
-# print(isinstance(curren.nu,float))
+# curren = Current(1,0.2,2,1,1.36,1027,2650)
+# print(curren.concentrationAtZ())
 
 
 # print(curren.tauCritical())

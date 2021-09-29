@@ -1,4 +1,4 @@
-# sediMETU v1.1.0
+# sediMETU v1.1.1
 sediMETU is a basic calculator for sediment-related parameters with a simple GUI.
 Developed by Yagiz Arda Cicek, Ⓒ 2021 in METU using the formulas obtained from Soulsby, 1997.
 You can switch between Current, Wave, and Current+Wave modes using the tabs at the top. Fill the input section with known parameters and hit "Calculate!".
@@ -14,6 +14,8 @@ You can switch between Current, Wave, and Current+Wave modes using the tabs at t
 > Contact ciceka@metu.edu.tr if you encounter any problems or calculation errors._
 
 ```
-What's new in v.1.1.0 (27.09.2021):
-- Added an option to select between different wave friction factor formulations.
+What's new in v.1.1.1 (29.09.2021):
+- Optimization for low resolution screens,
+- Skin friction shear stress and decay length scale (l) correction for Waves module,
+- Concentration formula fix for Currents module.
 ```
